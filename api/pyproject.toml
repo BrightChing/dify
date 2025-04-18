@@ -195,3 +195,12 @@ vdb = [
     "weaviate-client~=3.21.0",
     "xinference-client~=1.2.2",
 ]
+
+# Fix the Poetry source configuration
+[[tool.poetry.source]]
+name = "aliyun"
+url = "https://mirrors.aliyun.com/pypi/simple/"
+priority = "primary"
+
+[tool.poetry]
+package-mode = false
