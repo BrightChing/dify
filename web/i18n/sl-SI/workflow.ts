@@ -112,6 +112,7 @@ const translation = {
     pointerMode: 'Način s kazalcem',
     autoSaved: 'Samodejno shranjeno',
     configure: 'Konfiguriraj',
+    inRunMode: 'V načinu izvajanja',
   },
   env: {
     modal: {
@@ -185,6 +186,7 @@ const translation = {
     clearHistory: 'Počisti zgodovino',
     hintText: 'Vaša dejanja urejanja so sledena v zgodovini sprememb, ki se hrani na vaši napravi za čas trajanja te seje. Ta zgodovina bo izbrisana, ko zapustite urejevalnik.',
     placeholder: 'Še niste spremenili ničesar.',
+    stepForward_one: '{{count}} korak naprej',
   },
   errorMsg: {
     fields: {
@@ -303,6 +305,8 @@ const translation = {
     checklistResolved: 'Vse težave so rešene',
     createdBy: 'Ustvarjeno z',
     organizeBlocks: 'Organizirajte vozlišča',
+    minimize: 'Izhod iz celotnega zaslona',
+    maximize: 'Maksimiziraj platno',
   },
   nodes: {
     common: {
@@ -836,6 +840,7 @@ const translation = {
           upload_file_id: 'Naložite ID datoteke',
           title: 'datoteke, ki jih je ustvaril agent',
           url: 'URL slike',
+          transfer_method: 'Metoda prenosa. Vrednost je remote_url ali local_file.',
         },
         json: 'agent generiran json',
         text: 'vsebina, ki jo je ustvaril agent',
@@ -906,6 +911,35 @@ const translation = {
     nameThisVersion: 'Poimenujte to različico',
     releaseNotesPlaceholder: 'Opisujte, kaj se je spremenilo',
     restorationTip: 'Po obnovitvi različice bo trenutni osnutek prepisan.',
+  },
+  debug: {
+    noData: {
+      runThisNode: 'Zagon te vozlišča',
+      description: 'Rezultati zadnjega zagona bodo prikazani tukaj',
+    },
+    variableInspect: {
+      trigger: {
+        stop: 'Ustavi se',
+        normal: 'Inspiciranje spremenljivk',
+        clear: 'Jasno',
+        cached: 'Poglej shranjene spremenljivke',
+        running: 'Shranjevanje statusa delovanja',
+      },
+      emptyLink: 'Nauči se več',
+      chatNode: 'Pogovor',
+      envNode: 'Okolje',
+      systemNode: 'Sistem',
+      view: 'Oglej si dnevnik',
+      title: 'Inspiciranje spremenljivk',
+      clearNode: 'Počisti predpomnjeno spremenljivko',
+      clearAll: 'Ponastavi vse',
+      reset: 'Ponastavi na zadnjo vrednost izvajanja',
+      edited: 'Uredjeno',
+      resetConversationVar: 'Ponastavi spremenljivko pogovora na privzeto vrednost',
+      emptyTip: 'Po prehodu skozi vozlišče na platnu ali po zagonu vozlišča korak za korakom lahko v pregledu spremenljivk vidite trenutno vrednost spremenljivke vozlišča.',
+    },
+    settingsTab: 'Nastavitve',
+    lastRunTab: 'Zadnji zagon',
   },
 }
 
