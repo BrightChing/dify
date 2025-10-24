@@ -76,7 +76,11 @@ const Tools = () => {
   const handleOpenExternalDataToolModal = (payload: ExternalDataTool, index: number) => {
     setShowExternalDataToolModal({
       payload,
-      onSaveCallback: (externalDataTool: ExternalDataTool) => handleSaveExternalDataToolModal(externalDataTool, index),
+      onSaveCallback: (externalDataTool?: ExternalDataTool) => {
+        if (!externalDataTool)
+          return
+        handleSaveExternalDataToolModal(externalDataTool, index)
+      },
       onValidateBeforeSaveCallback: (newExternalDataTool: ExternalDataTool) => handleValidateBeforeSaveExternalDataToolModal(newExternalDataTool, index),
     })
   }
@@ -87,7 +91,7 @@ const Tools = () => {
         <div className='flex grow items-center'>
           <div
             className={`
-              group mr-1 flex h-6 w-6 items-center justify-center rounded-md 
+              group mr-1 flex h-6 w-6 items-center justify-center rounded-md
               ${externalDataToolsConfig.length && 'hover:bg-white hover:shadow-xs'}
             `}
             onClick={() => setExpanded(v => !v)}

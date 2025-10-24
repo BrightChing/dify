@@ -1,8 +1,6 @@
 const translation = {
   steps: {
     header: {
-      creation: 'สร้างความรู้',
-      update: 'เพิ่มข้อมูล',
       fallbackRoute: 'ความรู้',
     },
     one: 'เลือกแหล่งข้อมูล',
@@ -32,7 +30,8 @@ const translation = {
     },
     uploader: {
       title: 'อัปโหลดไฟล์',
-      button: 'ลากและวางไฟล์ หรือ',
+      button: 'ลากและวางไฟล์หรือโฟลเดอร์หรือ',
+      buttonSingleFile: 'ลากและวางไฟล์หรือ',
       browse: 'เล็ม',
       tip: 'รองรับ {{supportTypes}} สูงสุด {{size}}MB แต่ละตัว',
       validation: {
@@ -71,7 +70,6 @@ const translation = {
       run: 'วิ่ง',
       firecrawlTitle: 'แยกเนื้อหาเว็บด้วย 🔥Firecrawl',
       firecrawlDoc: 'เอกสาร Firecrawl',
-      firecrawlDocLink: 'https://docs.dify.ai/guides/knowledge-base/sync-from-website',
       jinaReaderTitle: 'แปลงทั้งไซต์เป็น Markdown',
       jinaReaderDoc: 'เรียนรู้เพิ่มเติมเกี่ยวกับ Jina Reader',
       jinaReaderDocLink: 'https://jina.ai/reader',
@@ -92,6 +90,14 @@ const translation = {
       scrapTimeInfo: 'ขูด {{total}} หน้าทั้งหมดภายใน {{time}}s',
       preview: 'ดูตัวอย่าง',
       maxDepthTooltip: 'ความลึกสูงสุดในการรวบรวมข้อมูลเมื่อเทียบกับ URL ที่ป้อน ความลึก 0 เพียงแค่ขูดหน้าของ URL ที่ป้อนความลึก 1 ขูด url และทุกอย่างหลังจาก enteredURL + หนึ่ง / เป็นต้น',
+      watercrawlTitle: 'ดึงเนื้อหาจากเว็บด้วย Watercrawl',
+      configureJinaReader: 'ตั้งค่า Jina Reader',
+      configureFirecrawl: 'กำหนดค่า Firecrawl',
+      configureWatercrawl: 'กำหนดค่าการเข้าถึงน้ำ',
+      waterCrawlNotConfiguredDescription: 'กำหนดค่า Watercrawl ด้วย API key เพื่อใช้งาน.',
+      watercrawlDoc: 'เอกสาร Watercrawl',
+      waterCrawlNotConfigured: 'Watercrawl ยังไม่ได้ตั้งค่า',
+      running: 'กำลัง เรียก ใช้',
     },
     cancel: 'ยกเลิก',
   },
@@ -177,6 +183,7 @@ const translation = {
     notAvailableForQA: 'ไม่สามารถใช้ได้กับ Q&A Index',
     paragraph: 'วรรค',
     parentChildTip: 'เมื่อใช้โหมดผู้ปกครอง-รอง child-chunk จะใช้สําหรับการดึงข้อมูล และ parent-chunk จะใช้สําหรับการเรียกคืนเป็นบริบท',
+    qaTip: 'เมื่อใช้ข้อมูล Q&A ที่มีโครงสร้าง คุณสามารถสร้างเอกสารที่จับคู่คําถามกับคําตอบได้ เอกสารเหล่านี้ได้รับการจัดทําดัชนีตามส่วนคําถาม ทําให้ระบบสามารถดึงคําตอบที่เกี่ยวข้องตามความคล้ายคลึงกันของคําถาม',
   },
   stepThree: {
     creationTitle: '🎉 สร้างความรู้',
@@ -199,6 +206,11 @@ const translation = {
     learnMore: 'ศึกษาเพิ่มเติม',
     title: 'เชื่อมต่อกับแหล่งข้อมูลอื่นใช่ไหม',
     description: 'ปัจจุบัน ฐานความรู้ของ Dify มีแหล่งข้อมูลที่จํากัดเท่านั้น การมีส่วนร่วมในแหล่งข้อมูลในฐานความรู้ Dify เป็นวิธีที่ยอดเยี่ยมในการช่วยเพิ่มความยืดหยุ่นและพลังของแพลตฟอร์มสําหรับผู้ใช้ทุกคน คู่มือการมีส่วนร่วมของเราทําให้ง่ายต่อการเริ่มต้นใช้งาน โปรดคลิกที่ลิงค์ด้านล่างเพื่อเรียนรู้เพิ่มเติม',
+  },
+  watercrawl: {
+    configWatercrawl: 'กำหนด Watercrawl',
+    getApiKeyLinkText: 'รับคีย์ API ของคุณจาก watercrawl.dev',
+    apiKeyPlaceholder: 'คีย์ API จาก watercrawl.dev',
   },
 }
 

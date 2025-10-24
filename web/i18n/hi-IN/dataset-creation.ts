@@ -1,8 +1,6 @@
 const translation = {
   steps: {
     header: {
-      creation: 'ज्ञान बनाएं',
-      update: 'डेटा जोड़ें',
       fallbackRoute: 'ज्ञान',
     },
     one: 'डेटा स्रोत चुनें',
@@ -27,7 +25,8 @@ const translation = {
     },
     uploader: {
       title: 'फ़ाइल अपलोड करें',
-      button: 'फ़ाइल खींचें और छोड़ें, या',
+      button: 'फ़ाइलों या फ़ोल्डरों को खींचें और छोड़ें, या',
+      buttonSingleFile: 'फ़ाइल को खींचें और छोड़ें, या',
       browse: 'ब्राउज़ करें',
       tip: 'समर्थित {{supportTypes}}। प्रत्येक अधिकतम {{size}}MB।',
       validation: {
@@ -65,8 +64,6 @@ const translation = {
       run: 'चलाएं',
       firecrawlTitle: '🔥फायरक्रॉल के साथ वेब सामग्री निकालें',
       firecrawlDoc: 'फायरक्रॉल दस्तावेज़',
-      firecrawlDocLink:
-        'https://docs.dify.ai/guides/knowledge-base/sync_from_website',
       options: 'विकल्प',
       crawlSubPage: 'उप-पृष्ठों को क्रॉल करें',
       limit: 'सीमा',
@@ -92,6 +89,14 @@ const translation = {
       chooseProvider: 'एक प्रदाता का चयन करें',
       jinaReaderTitle: 'पूरी साइट को मार्कडाउन में बदलें',
       jinaReaderNotConfiguredDescription: 'एक्सेस के लिए अपनी मुफ्त एपीआई कुंजी दर्ज करके जीना रीडर सेट करें।',
+      watercrawlTitle: 'Watercrawl के साथ वेब सामग्री निकालें',
+      waterCrawlNotConfigured: 'Watercrawl को कॉन्फ़िगर नहीं किया गया है',
+      configureFirecrawl: 'फायरक्रॉल को कॉन्फ़िगर करें',
+      watercrawlDoc: 'वाटरक्रॉल दस्तावेज़',
+      waterCrawlNotConfiguredDescription: 'इसे उपयोग करने के लिए वॉटरक्रॉल को एपीआई कुंजी के साथ कॉन्फ़िगर करें।',
+      configureJinaReader: 'जिना रीडर कॉन्फ़िगर करें',
+      configureWatercrawl: 'वाटरक्रॉल कॉन्फ़िगर करें',
+      running: 'दौड़ना',
     },
     cancel: 'रद्द करना',
   },
@@ -189,6 +194,7 @@ const translation = {
     parentChild: 'माता-पिता का बच्चा',
     parentChildTip: 'पैरेंट-चाइल्ड मोड का उपयोग करते समय, चाइल्ड-चंक का उपयोग पुनर्प्राप्ति के लिए किया जाता है और पैरेंट-चंक का उपयोग संदर्भ के रूप में रिकॉल के लिए किया जाता है।',
     paragraphTip: 'यह मोड पाठ को सीमांकक और अधिकतम खंड लंबाई के आधार पर पैराग्राफ में विभाजित करता है, पुनर्प्राप्ति के लिए मूल खंड के रूप में विभाजित पाठ का उपयोग करता है।',
+    qaTip: 'संरचित प्रश्नोत्तर डेटा का उपयोग करते समय, आप प्रश्नों को उत्तरों के साथ जोड़ने वाले दस्तावेज़ बना सकते हैं। ये दस्तावेज़ प्रश्न भाग के आधार पर अनुक्रमित होते हैं, जिससे प्रणाली क्वेरी समानता के आधार पर संबंधित उत्तरों को पुनः प्राप्त कर सकती है।',
   },
   stepThree: {
     creationTitle: '🎉 ज्ञान बनाया गया',
@@ -219,6 +225,11 @@ const translation = {
     title: 'अन्य डेटा स्रोतों से कनेक्ट करें?',
     learnMore: 'और जानो',
     description: 'वर्तमान में, Dify के ज्ञानकोष में केवल सीमित डेटा स्रोत हैं। Dify नॉलेज बेस में डेटा स्रोत का योगदान करना सभी उपयोगकर्ताओं के लिए प्लेटफॉर्म के लचीलेपन और शक्ति को बढ़ाने में मदद करने का एक शानदार तरीका है। हमारी योगदान मार्गदर्शिका आरंभ करना आसान बनाती है। अधिक जानने के लिए कृपया नीचे दिए गए लिंक पर क्लिक करें।',
+  },
+  watercrawl: {
+    apiKeyPlaceholder: 'watercrawl.dev से API कुंजी',
+    configWatercrawl: 'वाटरक्रॉल कॉन्फ़िगर करें',
+    getApiKeyLinkText: 'watercrawl.dev से अपना एपीआई कुंजी प्राप्त करें',
   },
 }
 

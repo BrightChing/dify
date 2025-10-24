@@ -1,8 +1,6 @@
 const translation = {
   steps: {
     header: {
-      creation: 'Создать базу знаний',
-      update: 'Добавить данные',
       fallbackRoute: 'Знание',
     },
     one: 'Выберите источник данных',
@@ -27,7 +25,8 @@ const translation = {
     },
     uploader: {
       title: 'Загрузить файл',
-      button: 'Перетащите файл или',
+      button: 'Перетащите файлы или папки или',
+      buttonSingleFile: 'Перетащите файл или',
       browse: 'Обзор',
       tip: 'Поддерживаются {{supportTypes}}. Максимум {{size}} МБ каждый.',
       validation: {
@@ -63,7 +62,6 @@ const translation = {
       run: 'Запустить',
       firecrawlTitle: 'Извлечь веб-контент с помощью 🔥Firecrawl',
       firecrawlDoc: 'Документация Firecrawl',
-      firecrawlDocLink: 'https://docs.dify.ai/guides/knowledge-base/sync-from-website',
       options: 'Опции',
       crawlSubPage: 'Сканировать подстраницы',
       limit: 'Лимит',
@@ -87,6 +85,14 @@ const translation = {
       jinaReaderDoc: 'Узнайте больше о Jina Reader',
       jinaReaderTitle: 'Конвертируйте весь сайт в Markdown',
       useSitemapTooltip: 'Следуйте карте сайта, чтобы просканировать сайт. Если нет, Jina Reader будет сканировать итеративно в зависимости от релевантности страницы, выдавая меньшее количество страниц, но более высокого качества.',
+      watercrawlTitle: 'Извлечение веб-контента с помощью Watercrawl',
+      configureWatercrawl: 'Настроить Watercrawl',
+      waterCrawlNotConfigured: 'Watercrawl не настроен',
+      configureFirecrawl: 'Настроить Firecrawl',
+      waterCrawlNotConfiguredDescription: 'Настройте Watercrawl с помощью ключа API для его использования.',
+      configureJinaReader: 'Настройте Jina Reader',
+      watercrawlDoc: 'Документация Watercrawl',
+      running: 'Бег',
     },
     cancel: 'Отмена',
   },
@@ -172,6 +178,7 @@ const translation = {
     childChunkForRetrieval: 'Детский фрагмент для извлечения',
     qaSwitchHighQualityTipContent: 'В настоящее время только высококачественный метод индекса поддерживает фрагментацию формата Q&A. Хотели бы вы перейти в режим высокого качества?',
     fullDocTip: 'Весь документ используется в качестве родительского блока и извлекается напрямую. Обратите внимание, что по причинам производительности текст, превышающий 10000 токенов, будет автоматически обрезан.',
+    qaTip: 'При использовании структурированных данных вопросов и ответов можно создавать документы, в которых вопросы сочетаются с ответами. Эти документы индексируются на основе части вопроса, что позволяет системе получать релевантные ответы на основе сходства запросов.',
   },
   stepThree: {
     creationTitle: '🎉 База знаний создана',
@@ -199,6 +206,11 @@ const translation = {
     learnMore: 'Подробнее',
     title: 'Подключаться к другим источникам данных?',
     description: 'В настоящее время база знаний Dify имеет лишь ограниченные источники данных. Добавление источника данных в базу знаний Dify — это отличный способ повысить гибкость и возможности платформы для всех пользователей. Наше руководство по вкладу поможет вам легко начать работу. Пожалуйста, нажмите на ссылку ниже, чтобы узнать больше.',
+  },
+  watercrawl: {
+    getApiKeyLinkText: 'Получите свой API-ключ с watercrawl.dev',
+    configWatercrawl: 'Настроить Watercrawl',
+    apiKeyPlaceholder: 'API ключ с watercrawl.dev',
   },
 }
 

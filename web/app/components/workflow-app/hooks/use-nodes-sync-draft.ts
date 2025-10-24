@@ -1,25 +1,25 @@
 import { useCallback } from 'react'
-import produce from 'immer'
+import { produce } from 'immer'
 import { useStoreApi } from 'reactflow'
 import { useParams } from 'next/navigation'
 import {
   useWorkflowStore,
 } from '@/app/components/workflow/store'
 import { BlockEnum } from '@/app/components/workflow/types'
-import { useWorkflowUpdate } from '@/app/components/workflow/hooks'
 import {
   useNodesReadOnly,
 } from '@/app/components/workflow/hooks/use-workflow'
 import { syncWorkflowDraft } from '@/service/workflow'
 import { useFeaturesStore } from '@/app/components/base/features/hooks'
 import { API_PREFIX } from '@/config'
+import { useWorkflowRefreshDraft } from '.'
 
 export const useNodesSyncDraft = () => {
   const store = useStoreApi()
   const workflowStore = useWorkflowStore()
   const featuresStore = useFeaturesStore()
   const { getNodesReadOnly } = useNodesReadOnly()
-  const { handleRefreshWorkflowDraft } = useWorkflowUpdate()
+  const { handleRefreshWorkflowDraft } = useWorkflowRefreshDraft()
   const params = useParams()
 
   const getPostParams = useCallback(() => {
@@ -28,6 +28,7 @@ export const useNodesSyncDraft = () => {
       edges,
       transform,
     } = store.getState()
+    const nodes = getNodes()
     const [x, y, zoom] = transform
     const {
       appId,
@@ -36,8 +37,7 @@ export const useNodesSyncDraft = () => {
       syncWorkflowDraftHash,
     } = workflowStore.getState()
 
-    if (appId) {
-      const nodes = getNodes()
+    if (appId && !!nodes.length) {
       const hasStartNode = nodes.find(node => node.data.type === BlockEnum.Start)
 
       if (!hasStartNode)
@@ -52,7 +52,7 @@ export const useNodesSyncDraft = () => {
           })
         })
       })
-      const producedEdges = produce(edges, (draft) => {
+      const producedEdges = produce(edges.filter(edge => !edge.data?._isTemp), (draft) => {
         draft.forEach((edge) => {
           Object.keys(edge.data).forEach((key) => {
             if (key.startsWith('_'))
@@ -97,7 +97,7 @@ export const useNodesSyncDraft = () => {
 
     if (postParams) {
       navigator.sendBeacon(
-        `${API_PREFIX}/apps/${params.appId}/workflows/draft?_token=${localStorage.getItem('console_token')}`,
+        `${API_PREFIX}/apps/${params.appId}/workflows/draft`,
         JSON.stringify(postParams.params),
       )
     }
@@ -124,7 +124,7 @@ export const useNodesSyncDraft = () => {
         const res = await syncWorkflowDraft(postParams)
         setSyncWorkflowDraftHash(res.hash)
         setDraftUpdatedAt(res.updated_at)
-        callback?.onSuccess && callback.onSuccess()
+        callback?.onSuccess?.()
       }
       catch (error: any) {
         if (error && error.json && !error.bodyUsed) {
@@ -133,10 +133,10 @@ export const useNodesSyncDraft = () => {
               handleRefreshWorkflowDraft()
           })
         }
-        callback?.onError && callback.onError()
+        callback?.onError?.()
       }
       finally {
-        callback?.onSettled && callback.onSettled()
+        callback?.onSettled?.()
       }
     }
   }, [workflowStore, getPostParams, getNodesReadOnly, handleRefreshWorkflowDraft])

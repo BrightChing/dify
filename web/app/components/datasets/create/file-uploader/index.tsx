@@ -14,7 +14,7 @@ import { upload } from '@/service/base'
 import { fetchFileUploadConfig } from '@/service/common'
 import { fetchSupportFileTypes } from '@/service/datasets'
 import I18n from '@/context/i18n'
-import { LanguagesSupported } from '@/i18n/language'
+import { LanguagesSupported } from '@/i18n-config/language'
 import { IS_CE_EDITION } from '@/config'
 import { Theme } from '@/types/app'
 import useTheme from '@/hooks/use-theme'
@@ -185,7 +185,8 @@ const FileUploader = ({
   const handleDragEnter = (e: DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    e.target !== dragRef.current && setDragging(true)
+    if (e.target !== dragRef.current)
+      setDragging(true)
   }
   const handleDragOver = (e: DragEvent) => {
     e.preventDefault()
@@ -194,24 +195,71 @@ const FileUploader = ({
   const handleDragLeave = (e: DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    e.target === dragRef.current && setDragging(false)
+    if (e.target === dragRef.current)
+      setDragging(false)
   }
+  type FileWithPath = {
+    relativePath?: string
+  } & File
+  const traverseFileEntry = useCallback(
+    (entry: any, prefix = ''): Promise<FileWithPath[]> => {
+      return new Promise((resolve) => {
+        if (entry.isFile) {
+          entry.file((file: FileWithPath) => {
+            file.relativePath = `${prefix}${file.name}`
+            resolve([file])
+          })
+        }
+        else if (entry.isDirectory) {
+          const reader = entry.createReader()
+          const entries: any[] = []
+          const read = () => {
+            reader.readEntries(async (results: FileSystemEntry[]) => {
+              if (!results.length) {
+                const files = await Promise.all(
+                  entries.map(ent =>
+                    traverseFileEntry(ent, `${prefix}${entry.name}/`),
+                  ),
+                )
+                resolve(files.flat())
+              }
+              else {
+                entries.push(...results)
+                read()
+              }
+            })
+          }
+          read()
+        }
+        else {
+          resolve([])
+        }
+      })
+    },
+    [],
+  )
 
-  const handleDrop = useCallback((e: DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDragging(false)
-    if (!e.dataTransfer)
-      return
-
-    let files = [...e.dataTransfer.files] as File[]
-    if (notSupportBatchUpload)
-      files = files.slice(0, 1)
-
-    const validFiles = files.filter(isValid)
-    initialUpload(validFiles)
-  }, [initialUpload, isValid, notSupportBatchUpload])
-
+  const handleDrop = useCallback(
+    async (e: DragEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      setDragging(false)
+      if (!e.dataTransfer) return
+      const nested = await Promise.all(
+        Array.from(e.dataTransfer.items).map((it) => {
+          const entry = (it as any).webkitGetAsEntry?.()
+          if (entry) return traverseFileEntry(entry)
+          const f = it.getAsFile?.()
+          return f ? Promise.resolve([f]) : Promise.resolve([])
+        }),
+      )
+      let files = nested.flat()
+      if (notSupportBatchUpload) files = files.slice(0, 1)
+      const valid = files.filter(isValid)
+      initialUpload(valid)
+    },
+    [initialUpload, isValid, notSupportBatchUpload, traverseFileEntry],
+  )
   const selectHandle = () => {
     if (fileUploader.current)
       fileUploader.current.click()
@@ -267,7 +315,7 @@ const FileUploader = ({
             <RiUploadCloud2Line className='mr-2 size-5' />
 
             <span>
-              {t('datasetCreation.stepOne.uploader.button')}
+              {notSupportBatchUpload ? t('datasetCreation.stepOne.uploader.buttonSingleFile') : t('datasetCreation.stepOne.uploader.button')}
               {supportTypes.length > 0 && (
                 <label className="ml-1 cursor-pointer text-text-accent" onClick={selectHandle}>{t('datasetCreation.stepOne.uploader.browse')}</label>
               )}
@@ -276,6 +324,7 @@ const FileUploader = ({
           <div>{t('datasetCreation.stepOne.uploader.tip', {
             size: fileUploadConfig.file_size_limit,
             supportTypes: supportTypesShowNames,
+            batchCount: fileUploadConfig.batch_count_limit,
           })}</div>
           {dragging && <div ref={dragRef} className='absolute left-0 top-0 h-full w-full' />}
         </div>
@@ -293,7 +342,8 @@ const FileUploader = ({
           >
             <div className="flex w-12 shrink-0 items-center justify-center">
               <DocumentFileIcon
-                className="size-6 shrink-0"
+                size='xl'
+                className="shrink-0"
                 name={fileItem.file.name}
                 extension={getFileType(fileItem.file)}
               />

@@ -1,8 +1,6 @@
 const translation = {
   steps: {
     header: {
-      creation: 'Створити Знання',
-      update: 'Додати дані',
       fallbackRoute: 'Знання',
     },
     one: 'Виберіть джерело даних',
@@ -22,7 +20,8 @@ const translation = {
     },
     uploader: {
       title: 'Завантажити текстовий файл',
-      button: 'Перетягніть файл або',
+      button: 'Перетягніть файли або папки або',
+      buttonSingleFile: 'Перетягніть файл або',
       browse: 'Оберіть',
       tip: 'Підтримуються {{supportTypes}}. Максимум {{size}} МБ кожен.',
       validation: {
@@ -60,7 +59,6 @@ const translation = {
       unknownError: 'Невідома помилка',
       maxDepth: 'Максимальна глибина',
       crawlSubPage: 'Сканування підсторінок',
-      firecrawlDocLink: 'https://docs.dify.ai/guides/knowledge-base/sync-from-website',
       preview: 'Попередній перегляд',
       fireCrawlNotConfigured: 'Firecrawl не налаштовано',
       includeOnlyPaths: 'Включати лише контури',
@@ -82,6 +80,14 @@ const translation = {
       jinaReaderNotConfigured: 'Jina Reader не налаштована',
       jinaReaderTitle: 'Перетворіть весь сайт на Markdown',
       useSitemap: 'Використовуйте карту сайту',
+      configureJinaReader: 'Налаштувати Jina Reader',
+      waterCrawlNotConfigured: 'Watercrawl не налаштовано',
+      waterCrawlNotConfiguredDescription: 'Налаштуйте Watercrawl з ключем API, щоб його використовувати.',
+      configureFirecrawl: 'Налаштування Firecrawl',
+      configureWatercrawl: 'Налаштування Watercrawl',
+      watercrawlTitle: 'Витягуйте веб-контент за допомогою Watercrawl',
+      watercrawlDoc: 'Документація Watercrawl',
+      running: 'Біг',
     },
     cancel: 'Скасувати',
   },
@@ -167,6 +173,7 @@ const translation = {
     switch: 'Комутатор',
     qaSwitchHighQualityTipTitle: 'Формат запитань і відповідей вимагає якісного методу індексації',
     paragraphTip: 'Цей режим розбиває текст на абзаци на основі роздільників і максимальної довжини фрагмента, використовуючи розділений текст як батьківський фрагмент для пошуку.',
+    qaTip: 'Використовуючи структуровані дані запитань і відповідей, ви можете створювати документи, які поєднують запитання з відповідями. Ці документи індексуються на основі частини запитань, що дозволяє системі отримувати релевантні відповіді на основі схожості запитів.',
   },
   stepThree: {
     creationTitle: '🎉 Знання створено',
@@ -199,6 +206,11 @@ const translation = {
     learnMore: 'Дізнатися більше',
     title: 'Підключитися до інших джерел даних?',
     description: 'Наразі база знань Dify має лише обмежені джерела даних. Додавання джерела даних до бази знань Dify – це фантастичний спосіб підвищити гнучкість і потужність платформи для всіх користувачів. Наш посібник із внеску спрощує початок роботи. Будь ласка, натисніть на посилання нижче, щоб дізнатися більше.',
+  },
+  watercrawl: {
+    configWatercrawl: 'Налаштування Watercrawl',
+    apiKeyPlaceholder: 'API ключ з watercrawl.dev',
+    getApiKeyLinkText: 'Отримайте ваш API ключ з watercrawl.dev',
   },
 }
 

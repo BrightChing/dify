@@ -27,6 +27,7 @@ export type CreateAppModalProps = {
   appIconUrl?: string | null
   appMode?: string
   appUseIconAsAnswerIcon?: boolean
+  max_active_requests?: number | null
   onConfirm: (info: {
     name: string
     icon_type: AppIconType
@@ -34,7 +35,9 @@ export type CreateAppModalProps = {
     icon_background?: string
     description: string
     use_icon_as_answer_icon?: boolean
+    max_active_requests?: number | null
   }) => Promise<void>
+  confirmDisabled?: boolean
   onHide: () => void
 }
 
@@ -49,7 +52,9 @@ const CreateAppModal = ({
   appDescription,
   appMode,
   appUseIconAsAnswerIcon,
+  max_active_requests,
   onConfirm,
+  confirmDisabled,
   onHide,
 }: CreateAppModalProps) => {
   const { t } = useTranslation()
@@ -64,6 +69,10 @@ const CreateAppModal = ({
   const [description, setDescription] = useState(appDescription || '')
   const [useIconAsAnswerIcon, setUseIconAsAnswerIcon] = useState(appUseIconAsAnswerIcon || false)
 
+  const [maxActiveRequestsInput, setMaxActiveRequestsInput] = useState(
+    max_active_requests !== null && max_active_requests !== undefined ? String(max_active_requests) : '',
+  )
+
   const { plan, enableBilling } = useProviderContext()
   const isAppsFull = (enableBilling && plan.usage.buildApps >= plan.total.buildApps)
 
@@ -72,16 +81,21 @@ const CreateAppModal = ({
       Toast.notify({ type: 'error', message: t('explore.appCustomize.nameRequired') })
       return
     }
-    onConfirm({
+    const isValid = maxActiveRequestsInput.trim() !== '' && !isNaN(Number(maxActiveRequestsInput))
+    const payload: any = {
       name,
       icon_type: appIcon.type,
       icon: appIcon.type === 'emoji' ? appIcon.icon : appIcon.fileId,
       icon_background: appIcon.type === 'emoji' ? appIcon.background! : undefined,
       description,
       use_icon_as_answer_icon: useIconAsAnswerIcon,
-    })
+    }
+    if (isValid)
+      payload.max_active_requests = Number(maxActiveRequestsInput)
+
+    onConfirm(payload)
     onHide()
-  }, [name, appIcon, description, useIconAsAnswerIcon, onConfirm, onHide, t])
+  }, [name, appIcon, description, useIconAsAnswerIcon, onConfirm, onHide, t, maxActiveRequestsInput])
 
   const { run: handleSubmit } = useDebounceFn(submit, { wait: 300 })
 
@@ -156,11 +170,27 @@ const CreateAppModal = ({
               <p className='body-xs-regular text-text-tertiary'>{t('app.answerIcon.descriptionInExplore')}</p>
             </div>
           )}
+          {isEditModal && (
+            <div className='pt-2'>
+              <div className='mb-2 mt-2 text-sm font-medium leading-[20px] text-text-primary'>{t('app.maxActiveRequests')}</div>
+              <Input
+                type='number'
+                min={1}
+                placeholder={t('app.maxActiveRequestsPlaceholder')}
+                value={maxActiveRequestsInput}
+                onChange={(e) => {
+                  setMaxActiveRequestsInput(e.target.value)
+                }}
+                className='h-10 w-full'
+              />
+              <p className='body-xs-regular mb-0 mt-2 text-text-tertiary'>{t('app.maxActiveRequestsTip')}</p>
+            </div>
+          )}
           {!isEditModal && isAppsFull && <AppsFull className='mt-4' loc='app-explore-create' />}
         </div>
         <div className='flex flex-row-reverse'>
           <Button
-            disabled={(!isEditModal && isAppsFull) || !name.trim()}
+            disabled={(!isEditModal && isAppsFull) || !name.trim() || confirmDisabled}
             className='ml-2 w-24 gap-1'
             variant='primary'
             onClick={handleSubmit}
