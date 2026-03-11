@@ -3,7 +3,7 @@ import io
 import json
 from collections.abc import Generator
 
-from google.cloud import storage as google_cloud_storage
+from google.cloud import storage as google_cloud_storage  # type: ignore
 
 from configs import dify_config
 from extensions.storage.base_storage import BaseStorage
@@ -61,6 +61,6 @@ class GoogleCloudStorage(BaseStorage):
         blob = bucket.blob(filename)
         return blob.exists()
 
-    def delete(self, filename):
+    def delete(self, filename: str):
         bucket = self.client.get_bucket(self.bucket_name)
         bucket.delete_blob(filename)

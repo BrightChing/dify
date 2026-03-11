@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/nextjs'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import AddButton from './add-button'
 
 const meta = {
-  title: 'Base/Button/AddButton',
+  title: 'Base/General/AddButton',
   component: AddButton,
   parameters: {
     layout: 'centered',

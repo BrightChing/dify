@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/nextjs'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { useEffect, useState } from 'react'
 import Modal from '.'
 
 const meta = {
-  title: 'Base/Dialog/Modal',
+  title: 'Base/Feedback/Modal',
   component: Modal,
   parameters: {
     layout: 'fullscreen',

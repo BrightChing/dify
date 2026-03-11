@@ -33,26 +33,22 @@ from core.datasource.entities.datasource_entities import (
 )
 from core.datasource.online_drive.online_drive_plugin import OnlineDriveDatasourcePlugin
 from core.entities.knowledge_entities import PipelineDataset, PipelineDocument
-from core.model_runtime.errors.invoke import InvokeAuthorizationError
 from core.rag.index_processor.constant.built_in_field import BuiltInField
 from core.repositories.factory import DifyCoreRepositoryFactory
-from core.workflow.repositories.draft_variable_repository import DraftVariableSaverFactory
-from core.workflow.repositories.workflow_execution_repository import WorkflowExecutionRepository
-from core.workflow.repositories.workflow_node_execution_repository import WorkflowNodeExecutionRepository
-from core.workflow.variable_loader import DUMMY_VARIABLE_LOADER, VariableLoader
+from dify_graph.model_runtime.errors.invoke import InvokeAuthorizationError
+from dify_graph.repositories.draft_variable_repository import DraftVariableSaverFactory
+from dify_graph.repositories.workflow_execution_repository import WorkflowExecutionRepository
+from dify_graph.repositories.workflow_node_execution_repository import WorkflowNodeExecutionRepository
+from dify_graph.variable_loader import DUMMY_VARIABLE_LOADER, VariableLoader
 from extensions.ext_database import db
-from extensions.ext_redis import redis_client
 from libs.flask_utils import preserve_flask_contexts
 from models import Account, EndUser, Workflow, WorkflowNodeExecutionTriggeredFrom
 from models.dataset import Document, DocumentPipelineExecutionLog, Pipeline
 from models.enums import WorkflowRunTriggeredFrom
 from models.model import AppMode
 from services.datasource_provider_service import DatasourceProviderService
-from services.feature_service import FeatureService
-from services.file_service import FileService
+from services.rag_pipeline.rag_pipeline_task_proxy import RagPipelineTaskProxy
 from services.workflow_draft_variable_service import DraftVarLoader, WorkflowDraftVariableService
-from tasks.rag_pipeline.priority_rag_pipeline_run_task import priority_rag_pipeline_run_task
-from tasks.rag_pipeline.rag_pipeline_run_task import rag_pipeline_run_task
 
 logger = logging.getLogger(__name__)
 
@@ -124,7 +120,7 @@ class PipelineGenerator(BaseAppGenerator):
                 raise ValueError("Pipeline dataset is required")
         inputs: Mapping[str, Any] = args["inputs"]
         start_node_id: str = args["start_node_id"]
-        datasource_type: str = args["datasource_type"]
+        datasource_type = DatasourceProviderType(args["datasource_type"])
         datasource_info_list: list[Mapping[str, Any]] = self._format_datasource_info_list(
             datasource_type, args["datasource_info_list"], pipeline, workflow, start_node_id, user
         )
@@ -134,7 +130,7 @@ class PipelineGenerator(BaseAppGenerator):
             pipeline=pipeline, workflow=workflow, start_node_id=start_node_id
         )
         documents: list[Document] = []
-        if invoke_from == InvokeFrom.PUBLISHED and not is_retry and not args.get("original_document_id"):
+        if invoke_from == InvokeFrom.PUBLISHED_PIPELINE and not is_retry and not args.get("original_document_id"):
             from services.dataset_service import DocumentService
 
             for datasource_info in datasource_info_list:
@@ -160,14 +156,14 @@ class PipelineGenerator(BaseAppGenerator):
         for i, datasource_info in enumerate(datasource_info_list):
             workflow_run_id = str(uuid.uuid4())
             document_id = args.get("original_document_id") or None
-            if invoke_from == InvokeFrom.PUBLISHED and not is_retry:
+            if invoke_from == InvokeFrom.PUBLISHED_PIPELINE and not is_retry:
                 document_id = document_id or documents[i].id
                 document_pipeline_execution_log = DocumentPipelineExecutionLog(
                     document_id=document_id,
                     datasource_type=datasource_type,
                     datasource_info=json.dumps(datasource_info),
                     datasource_node_id=start_node_id,
-                    input_data=inputs,
+                    input_data=dict(inputs),
                     pipeline_id=pipeline.id,
                     created_by=user.id,
                 )
@@ -248,34 +244,7 @@ class PipelineGenerator(BaseAppGenerator):
                 )
 
         if rag_pipeline_invoke_entities:
-            # store the rag_pipeline_invoke_entities to object storage
-            text = [item.model_dump() for item in rag_pipeline_invoke_entities]
-            name = "rag_pipeline_invoke_entities.json"
-            # Convert list to proper JSON string
-            json_text = json.dumps(text)
-            upload_file = FileService(db.engine).upload_text(json_text, name, user.id, dataset.tenant_id)
-            features = FeatureService.get_features(dataset.tenant_id)
-            if features.billing.enabled and features.billing.subscription.plan == "sandbox":
-                tenant_pipeline_task_key = f"tenant_pipeline_task:{dataset.tenant_id}"
-                tenant_self_pipeline_task_queue = f"tenant_self_pipeline_task_queue:{dataset.tenant_id}"
-
-                if redis_client.get(tenant_pipeline_task_key):
-                    # Add to waiting queue using List operations (lpush)
-                    redis_client.lpush(tenant_self_pipeline_task_queue, upload_file.id)
-                else:
-                    # Set flag and execute task
-                    redis_client.set(tenant_pipeline_task_key, 1, ex=60 * 60)
-                    rag_pipeline_run_task.delay(  # type: ignore
-                        rag_pipeline_invoke_entities_file_id=upload_file.id,
-                        tenant_id=dataset.tenant_id,
-                    )
-
-            else:
-                priority_rag_pipeline_run_task.delay(  # type: ignore
-                    rag_pipeline_invoke_entities_file_id=upload_file.id,
-                    tenant_id=dataset.tenant_id,
-                )
-
+            RagPipelineTaskProxy(dataset.tenant_id, user.id, rag_pipeline_invoke_entities).delay()
         # return batch, dataset, documents
         return {
             "batch": batch,
@@ -691,7 +660,7 @@ class PipelineGenerator(BaseAppGenerator):
         tenant_id: str,
         dataset_id: str,
         built_in_field_enabled: bool,
-        datasource_type: str,
+        datasource_type: DatasourceProviderType,
         datasource_info: Mapping[str, Any],
         created_from: str,
         position: int,
@@ -699,17 +668,17 @@ class PipelineGenerator(BaseAppGenerator):
         batch: str,
         document_form: str,
     ):
-        if datasource_type == "local_file":
-            name = datasource_info.get("name", "untitled")
-        elif datasource_type == "online_document":
-            name = datasource_info.get("page", {}).get("page_name", "untitled")
-        elif datasource_type == "website_crawl":
-            name = datasource_info.get("title", "untitled")
-        elif datasource_type == "online_drive":
-            name = datasource_info.get("name", "untitled")
-        else:
-            raise ValueError(f"Unsupported datasource type: {datasource_type}")
-
+        match datasource_type:
+            case DatasourceProviderType.LOCAL_FILE:
+                name = datasource_info.get("name", "untitled")
+            case DatasourceProviderType.ONLINE_DOCUMENT:
+                name = datasource_info.get("page", {}).get("page_name", "untitled")
+            case DatasourceProviderType.WEBSITE_CRAWL:
+                name = datasource_info.get("title", "untitled")
+            case DatasourceProviderType.ONLINE_DRIVE:
+                name = datasource_info.get("name", "untitled")
+            case _:
+                raise ValueError(f"Unsupported datasource type: {datasource_type}")
         document = Document(
             tenant_id=tenant_id,
             dataset_id=dataset_id,
@@ -737,7 +706,7 @@ class PipelineGenerator(BaseAppGenerator):
 
     def _format_datasource_info_list(
         self,
-        datasource_type: str,
+        datasource_type: DatasourceProviderType,
         datasource_info_list: list[Mapping[str, Any]],
         pipeline: Pipeline,
         workflow: Workflow,
@@ -747,7 +716,7 @@ class PipelineGenerator(BaseAppGenerator):
         """
         Format datasource info list.
         """
-        if datasource_type == "online_drive":
+        if datasource_type == DatasourceProviderType.ONLINE_DRIVE:
             all_files: list[Mapping[str, Any]] = []
             datasource_node_data = None
             datasource_nodes = workflow.graph_dict.get("nodes", [])

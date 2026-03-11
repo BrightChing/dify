@@ -1,6 +1,6 @@
 from core.model_manager import ModelManager
-from core.model_runtime.entities.model_entities import ModelType
 from core.moderation.base import Moderation, ModerationAction, ModerationInputsResult, ModerationOutputsResult
+from dify_graph.model_runtime.entities.model_entities import ModelType
 
 
 class OpenAIModeration(Moderation):
@@ -52,7 +52,7 @@ class OpenAIModeration(Moderation):
         text = "\n".join(str(inputs.values()))
         model_manager = ModelManager()
         model_instance = model_manager.get_model_instance(
-            tenant_id=self.tenant_id, provider="openai", model_type=ModelType.MODERATION, model="text-moderation-stable"
+            tenant_id=self.tenant_id, provider="openai", model_type=ModelType.MODERATION, model="omni-moderation-latest"
         )
 
         openai_moderation = model_instance.invoke_moderation(text=text)

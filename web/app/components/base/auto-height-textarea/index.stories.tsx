@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/nextjs'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { useState } from 'react'
 import AutoHeightTextarea from '.'
 
 const meta = {
-  title: 'Base/Input/AutoHeightTextarea',
+  title: 'Base/Data Entry/AutoHeightTextarea',
   component: AutoHeightTextarea,
   parameters: {
     layout: 'centered',

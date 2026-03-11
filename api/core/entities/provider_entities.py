@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from enum import StrEnum, auto
 from typing import Union
 
@@ -9,8 +11,8 @@ from core.entities.parameter_entities import (
     ModelSelectorScope,
     ToolSelectorScope,
 )
-from core.model_runtime.entities.model_entities import ModelType
 from core.tools.entities.common_entities import I18nObject
+from dify_graph.model_runtime.entities.model_entities import ModelType
 
 
 class ProviderQuotaType(StrEnum):
@@ -107,7 +109,7 @@ class CustomModelConfiguration(BaseModel):
 
     model: str
     model_type: ModelType
-    credentials: dict | None = None
+    credentials: dict | None
     current_credential_id: str | None = None
     current_credential_name: str | None = None
     available_model_credentials: list[CredentialConfiguration] = []
@@ -178,7 +180,7 @@ class BasicProviderConfig(BaseModel):
         TOOLS_SELECTOR = CommonParameterType.TOOLS_SELECTOR
 
         @classmethod
-        def value_of(cls, value: str) -> "ProviderConfig.Type":
+        def value_of(cls, value: str) -> ProviderConfig.Type:
             """
             Get value of given mode.
 
@@ -207,6 +209,7 @@ class ProviderConfig(BasicProviderConfig):
     required: bool = False
     default: Union[int, str, float, bool] | None = None
     options: list[Option] | None = None
+    multiple: bool | None = False
     label: I18nObject | None = None
     help: I18nObject | None = None
     url: str | None = None

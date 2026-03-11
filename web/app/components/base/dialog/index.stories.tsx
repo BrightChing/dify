@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/nextjs'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { useEffect, useState } from 'react'
 import Dialog from '.'
 
 const meta = {
-  title: 'Base/Dialog/Dialog',
+  title: 'Base/Feedback/Dialog',
   component: Dialog,
   parameters: {
     layout: 'fullscreen',
@@ -47,6 +47,7 @@ const meta = {
   args: {
     title: 'Manage API Keys',
     show: false,
+    children: null,
   },
 } satisfies Meta<typeof Dialog>
 
